@@ -1,3 +1,5 @@
+// Modified by Daniel Santana Rocha <danielsan@santanabigdata.com.br>
+
 import { HttpError } from "../../utils/http.ts";
 import { PATH } from "../components/Image.tsx";
 import { Params as Props } from "../utils/image/engine.ts";
@@ -5,6 +7,8 @@ import { engine as cloudflare } from "../utils/image/engines/cloudflare/engine.t
 import { engine as deco } from "../utils/image/engines/deco/engine.ts";
 import { engine as passThrough } from "../utils/image/engines/passThrough/engine.ts";
 import { engine as wasm } from "../utils/image/engines/wasm/engine.ts";
+
+const IMAGES_CACHE_DISABLE: boolean = Deno?.env.has("IMAGES_CACHE_DISABLE");
 
 const ENGINES = [
   passThrough,
@@ -81,7 +85,9 @@ const handler = async (
   }
 };
 
-const cache = typeof caches !== "undefined" ? await caches.open(PATH) : null;
+const cache = (!IMAGES_CACHE_DISABLE && typeof caches !== "undefined")
+  ? await caches.open(PATH)
+  : null;
 
 const loader: typeof handler = async (props, req) => {
   const cached = await cache?.match(req).catch(() => null);
