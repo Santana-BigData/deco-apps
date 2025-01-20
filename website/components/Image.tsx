@@ -3,6 +3,8 @@ import type { JSX } from "preact";
 import { forwardRef } from "preact/compat";
 import { Manifest } from "../manifest.gen.ts";
 
+const IMAGES_SRCSET_DISABLE: boolean = Deno?.env.has("IMAGES_SRCSET_DISABLE");
+
 export const PATH: `/live/invoke/${keyof Manifest["loaders"]}` =
   "/live/invoke/website/loaders/image.ts";
 
@@ -134,6 +136,10 @@ export const getSrcSet = (
   height?: number,
   fit?: FitOptions,
 ) => {
+  if (IMAGES_SRCSET_DISABLE) {
+    return undefined;
+  }
+
   const srcSet = [];
 
   for (let it = 0; it < FACTORS.length; it++) {
