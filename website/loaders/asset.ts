@@ -1,5 +1,8 @@
 import { forbidden } from "@deco/deco";
 import { fetchSafe, STALE } from "../../utils/fetch.ts";
+
+const ASSET_REDIRECT_ENABLE: boolean = Deno?.env.has("ASSET_REDIRECT_ENABLE");
+
 interface Props {
   /**
    * @description Asset src like: https://fonts.gstatic.com/...
@@ -15,6 +18,13 @@ const loader = async (props: Props, request: Request): Promise<Response> => {
   if (!allowedProtocols.includes(url.protocol)) {
     forbidden({
       message: "Only HTTP and HTTPS protocols are allowed",
+    });
+  }
+
+  if (ASSET_REDIRECT_ENABLE) {
+    return new Response("Asset Redirect is Enabled!", {
+      status: 302,
+      headers: { Location: url.href },
     });
   }
 
