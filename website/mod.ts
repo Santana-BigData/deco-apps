@@ -140,6 +140,7 @@ export interface Props {
    * @hide true
    */
   sendToClickHouse?: boolean;
+  lang?: string;
 }
 /**
  * @title Website
